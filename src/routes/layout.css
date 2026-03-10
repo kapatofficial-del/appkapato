@@ -1,3 +1,125 @@
 @import 'tailwindcss';
-@plugin '@tailwindcss/forms';
-@plugin '@tailwindcss/typography';
+
+@theme {
+	--color-primary: #FF5733;
+	--color-primary-light: #FF7A5C;
+	--color-primary-dark: #E04420;
+	--color-secondary: #0E4D64;
+	--color-secondary-light: #1A6B8A;
+	--color-secondary-dark: #093A4C;
+	--color-background-light: #F8FAFC;
+	--color-background-dark: #0F172A;
+	--color-surface-light: #FFFFFF;
+	--color-surface-dark: #1E293B;
+	--color-text-light: #334155;
+	--color-text-dark: #E2E8F0;
+	--font-sans: 'Inter', sans-serif;
+	--font-display: 'Montserrat', sans-serif;
+}
+
+/* Smooth scroll */
+html {
+	scroll-behavior: smooth;
+}
+
+/* Animated gradient background */
+@keyframes gradient-shift {
+	0%, 100% { background-position: 0% 50%; }
+	50% { background-position: 100% 50%; }
+}
+
+.animate-gradient {
+	background-size: 200% 200%;
+	animation: gradient-shift 8s ease infinite;
+}
+
+/* Fade in up animation */
+@keyframes fade-in-up {
+	from {
+		opacity: 0;
+		transform: translateY(30px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.animate-fade-in-up {
+	animation: fade-in-up 0.8s ease-out forwards;
+}
+
+.animate-fade-in-up-delay-1 {
+	animation: fade-in-up 0.8s ease-out 0.2s forwards;
+	opacity: 0;
+}
+
+.animate-fade-in-up-delay-2 {
+	animation: fade-in-up 0.8s ease-out 0.4s forwards;
+	opacity: 0;
+}
+
+.animate-fade-in-up-delay-3 {
+	animation: fade-in-up 0.8s ease-out 0.6s forwards;
+	opacity: 0;
+}
+
+/* Floating animation */
+@keyframes float {
+	0%, 100% { transform: translateY(0); }
+	50% { transform: translateY(-12px); }
+}
+
+.animate-float {
+	animation: float 4s ease-in-out infinite;
+}
+
+/* Pulse glow */
+@keyframes pulse-glow {
+	0%, 100% { box-shadow: 0 0 20px rgba(255, 87, 51, 0.3); }
+	50% { box-shadow: 0 0 40px rgba(255, 87, 51, 0.6); }
+}
+
+.animate-pulse-glow {
+	animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* Hero pattern */
+.hero-gradient {
+	background: linear-gradient(135deg, #0E4D64 0%, #093A4C 30%, #0E4D64 60%, #1A6B8A 100%);
+}
+
+/* Glass effect */
+.glass {
+	background: rgba(255, 255, 255, 0.08);
+	backdrop-filter: blur(12px);
+	border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Service card hover lift */
+.card-hover {
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card-hover:hover {
+	transform: translateY(-8px);
+	box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* Scroll indicator bounce */
+@keyframes bounce-down {
+	0%, 100% { transform: translateY(0); }
+	50% { transform: translateY(8px); }
+}
+
+.animate-bounce-down {
+	animation: bounce-down 2s ease-in-out infinite;
+}
+
+/* Hide scrollbar for horizontal scroll areas */
+.scrollbar-hide {
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+	display: none;
+}
