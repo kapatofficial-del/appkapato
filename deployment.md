@@ -5,10 +5,16 @@
 - **User:** debian
 - **SSH:** `ssh debian@51.79.254.94`
 
+## Live URLs
+- **Production:** https://kapato.org
+- **WWW:** https://www.kapato.org
+- **Cockpit:** https://51.79.254.94:9090
+
 ## Stack
 - SvelteKit + adapter-node
 - Docker (linux/amd64)
-- Running on port 3000
+- Nginx reverse proxy + SSL (Let's Encrypt, auto-renews)
+- Running on port 3000 internally
 
 ---
 
@@ -42,7 +48,7 @@ sudo docker run -d -p 3000:3000 --name kapato --restart always kapato
 sudo docker ps
 ```
 
-**App is live at:** http://51.79.254.94:3000
+**App is live at:** https://kapato.org
 
 ---
 
@@ -57,6 +63,13 @@ sudo docker ps
 | `sudo docker stats` | Live CPU/RAM usage |
 
 ---
+
+## Nginx Commands
+| Command | What it does |
+|---|---|
+| `sudo systemctl reload nginx` | Reload config |
+| `sudo nginx -t` | Test config for errors |
+| `sudo certbot renew` | Manually renew SSL |
 
 ## Other Services
 - **Cockpit (server GUI):** https://51.79.254.94:9090

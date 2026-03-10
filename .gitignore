@@ -22,3 +22,4 @@ Thumbs.db
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 kapato.tar.gz
+data/kapato.db
