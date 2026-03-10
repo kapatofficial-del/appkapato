@@ -33,6 +33,7 @@ docker build --platform linux/amd64 -t kapato .
 docker save kapato | gzip > kapato.tar.gz
 scp kapato.tar.gz debian@51.79.254.94:~
 ```
+pass: Dawnlitdev@gotvps##2000
 
 ### Step 3 — Load and restart on VPS
 ```bash

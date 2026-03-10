@@ -42,6 +42,13 @@
 				{/each}
 				<div class="w-px h-6 mx-3 {scrolled ? 'bg-gray-200' : 'bg-white/20'}"></div>
 				<a
+					href="/admin/login"
+					class="border font-semibold text-sm px-5 py-2.5 rounded-full transition-all duration-300 hover:-translate-y-0.5
+						{scrolled ? 'border-gray-300 text-gray-600 hover:border-primary hover:text-primary' : 'border-white/40 text-white hover:border-white hover:bg-white/10'}"
+				>
+					Login
+				</a>
+				<a
 					href="/#contact"
 					class="bg-primary text-white px-6 py-2.5 rounded-full font-semibold text-sm hover:bg-primary-dark transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-0.5"
 				>
@@ -72,7 +79,14 @@
 						{link.label}
 					</a>
 				{/each}
-				<div class="pt-3 pb-1">
+				<div class="pt-3 pb-1 space-y-2">
+					<a
+						href="/admin/login"
+						class="block border border-gray-300 text-gray-600 px-5 py-3.5 rounded-xl font-semibold text-center hover:border-primary hover:text-primary transition-all text-[15px]"
+						onclick={() => (mobileMenuOpen = false)}
+					>
+						Login
+					</a>
 					<a
 						href="/#contact"
 						class="block bg-primary text-white px-5 py-3.5 rounded-xl font-semibold text-center hover:bg-primary-dark transition-all shadow-md text-[15px]"

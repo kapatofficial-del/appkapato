@@ -34,4 +34,10 @@ db.exec(`
 	);
 `);
 
+// seed default admin if no users exist
+const userCount = (db.prepare('SELECT COUNT(*) as count FROM users').get() as { count: number }).count;
+if (userCount === 0) {
+	db.prepare("INSERT INTO users (username, password) VALUES (?, ?)").run('admin', 'kapato123');
+}
+
 export default db;
