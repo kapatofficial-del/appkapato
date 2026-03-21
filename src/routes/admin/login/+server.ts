@@ -1,13 +1,13 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import db from '$lib/db';
+
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
 export const POST: RequestHandler = async ({ request, cookies }) => {
 	const { username, password } = await request.json();
 
-	const user = db.prepare('SELECT * FROM users WHERE username = ? AND password = ?').get(username, password);
-
-	if (user) {
+	if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
 		cookies.set('admin_session', 'authenticated', {
 			path: '/',
 			httpOnly: true,

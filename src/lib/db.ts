@@ -1,8 +1,7 @@
 import Database from 'better-sqlite3';
-import { join } from 'path';
 
-// database file is stored at /data/kapato.db
-const db = new Database(join(process.cwd(), 'data', 'kapato.db'));
+const DB_PATH = process.env.DB_PATH ?? '/var/lib/kapato/kapato.db';
+const db = new Database(DB_PATH);
 
 // enable WAL mode for better performance
 db.pragma('journal_mode = WAL');
