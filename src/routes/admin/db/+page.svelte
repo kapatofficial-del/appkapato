@@ -75,7 +75,7 @@
 	</aside>
 
 	<!-- Main -->
-	<div class="flex-1 overflow-auto p-6">
+	<div class="w-0 flex-1 overflow-y-auto p-6">
 
 		<!-- Header -->
 		<div class="flex items-center justify-between mb-5">
