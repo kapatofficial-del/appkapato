@@ -26,3 +26,6 @@ kapato.tar.gz
 data/kapato.db
 data/kapato.db-shm
 data/kapato.db-wal
+
+# Private docs
+clientdocumentation.md
