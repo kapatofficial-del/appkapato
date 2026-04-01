@@ -104,7 +104,7 @@
 		</aside>
 
 		<!-- Main -->
-		<div class="flex-1 flex flex-col min-h-screen lg:ml-64">
+		<div class="flex-1 flex flex-col min-h-screen lg:ml-64 min-w-0">
 
 			<!-- Top bar (mobile) -->
 			<header class="bg-gray-900 border-b border-gray-800 px-4 py-3 flex items-center gap-4 lg:hidden">
@@ -121,7 +121,7 @@
 			</header>
 
 			<!-- Page content -->
-			<main class="flex-1 overflow-y-auto">
+			<main class="flex-1 overflow-y-auto min-w-0">
 				{@render children()}
 			</main>
 

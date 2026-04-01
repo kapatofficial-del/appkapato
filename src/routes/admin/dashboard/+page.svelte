@@ -2,7 +2,7 @@
 	let { data } = $props();
 </script>
 
-<div class="p-8 space-y-6">
+<div class="p-4 sm:p-8 space-y-6">
 
 	<div>
 		<h2 class="text-2xl font-bold text-white">Dashboard</h2>
@@ -37,24 +37,26 @@
 	<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
 		<!-- Recent pings -->
-		<div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+		<div class="bg-gray-900 border border-gray-800 rounded-xl">
 			<div class="px-5 py-3 border-b border-gray-800 flex items-center justify-between">
 				<p class="text-sm font-semibold text-white">Recent Pings</p>
 				<a href="/admin/locations" class="text-xs text-gray-500 hover:text-white transition">View all →</a>
 			</div>
 			{#if data.recentPings.length > 0}
-				<table class="w-full text-xs">
-					<tbody class="divide-y divide-gray-800">
-						{#each data.recentPings as ping}
-							<tr class="hover:bg-gray-800/50 transition">
-								<td class="px-5 py-3 font-mono font-bold text-green-400">{ping.device_id}</td>
-								<td class="px-5 py-3 text-gray-300">{ping.mithun_name ?? '—'}</td>
-								<td class="px-5 py-3 font-mono text-gray-500">{ping.lat}, {ping.lng}</td>
-								<td class="px-5 py-3 text-gray-600">{ping.ts}</td>
-							</tr>
-						{/each}
-					</tbody>
-				</table>
+				<div class="overflow-x-auto rounded-b-xl">
+					<table class="w-full text-xs whitespace-nowrap">
+						<tbody class="divide-y divide-gray-800">
+							{#each data.recentPings as ping}
+								<tr class="hover:bg-gray-800/50 transition">
+									<td class="px-5 py-3 font-mono font-bold text-green-400">{ping.device_id}</td>
+									<td class="px-5 py-3 text-gray-300">{ping.mithun_name ?? '—'}</td>
+									<td class="px-5 py-3 font-mono text-gray-500">{ping.lat}, {ping.lng}</td>
+									<td class="px-5 py-3 text-gray-600">{ping.ts}</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</div>
 			{:else}
 				<p class="px-5 py-8 text-center text-gray-600 text-sm">No pings yet.</p>
 			{/if}

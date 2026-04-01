@@ -342,10 +342,10 @@
 		</div>
 	</div>
 
-	<div class="grid grid-cols-2 gap-4 flex-1 min-h-0">
+	<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
 		<!-- Left: Config -->
-		<div class="bg-gray-900 border border-gray-800 rounded-xl flex flex-col overflow-hidden">
+		<div class="bg-gray-900 border border-gray-800 rounded-xl flex flex-col overflow-hidden min-h-0">
 			<div class="px-4 py-3 border-b border-gray-800">
 				<p class="text-xs font-semibold text-white">Configuration</p>
 				<p class="text-xs text-gray-500">Adjust then click Generate</p>
@@ -437,7 +437,7 @@
 		</div>
 
 		<!-- Right: Output -->
-		<div class="bg-gray-900 border border-gray-800 rounded-xl flex flex-col overflow-hidden">
+		<div class="bg-gray-900 border border-gray-800 rounded-xl flex flex-col overflow-hidden min-h-[400px] lg:min-h-0">
 			<div class="px-4 py-3 border-b border-gray-800 flex items-center justify-between flex-shrink-0">
 				<div>
 					<p class="text-xs font-semibold text-white">Generated Code</p>

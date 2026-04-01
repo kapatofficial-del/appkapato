@@ -47,9 +47,9 @@
 	}
 </script>
 
-<div class="p-8 space-y-8">
+<div class="p-4 sm:p-8 space-y-6">
 
-	<div class="flex items-center justify-between">
+	<div class="flex flex-wrap items-center justify-between gap-2">
 		<div>
 			<h2 class="text-2xl font-bold text-white">Devices</h2>
 			<p class="text-gray-500 text-sm mt-1">Manage GPS tracking devices assigned to Mithun</p>
@@ -79,7 +79,7 @@
 		<div class="bg-gray-900 border border-green-600/30 rounded-xl p-6">
 			<p class="text-sm font-semibold text-green-400 mb-5">New Device</p>
 			<form method="POST" action="?/create" use:enhance={crudEnhance} class="space-y-4">
-				<div class="grid grid-cols-2 gap-4">
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 					<div>
 						<label class="text-xs text-gray-500 mb-1 block" for="add-device-id">
 							Device ID <span class="text-red-400">*</span>
@@ -104,7 +104,7 @@
 							class="w-full bg-gray-800 border border-gray-700 focus:border-green-500 focus:outline-none rounded-lg px-3 py-2.5 text-sm text-white"
 						/>
 					</div>
-					<div class="col-span-2">
+					<div class="sm:col-span-2">
 						<label class="text-xs text-gray-500 mb-1 block" for="add-client">
 							Assign to Client <span class="text-gray-600">(optional)</span>
 						</label>
@@ -134,7 +134,7 @@
 			<p class="text-sm font-semibold text-blue-400 mb-5">Edit Device</p>
 			<form method="POST" action="?/update" use:enhance={crudEnhance} class="space-y-4">
 				<input type="hidden" name="id" value={editingDevice.id} />
-				<div class="grid grid-cols-2 gap-4">
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 					<div>
 						<label class="text-xs text-gray-500 mb-1 block" for="edit-device-id">
 							Device ID <span class="text-red-400">*</span>
@@ -159,7 +159,7 @@
 							class="w-full bg-gray-800 border border-gray-700 focus:border-blue-500 focus:outline-none rounded-lg px-3 py-2.5 text-sm text-white"
 						/>
 					</div>
-					<div class="col-span-2">
+					<div class="sm:col-span-2">
 						<label class="text-xs text-gray-500 mb-1 block" for="edit-client">
 							Assign to Client <span class="text-gray-600">(optional)</span>
 						</label>
@@ -184,8 +184,8 @@
 	{/if}
 
 	<!-- Filters -->
-	<div class="flex items-center gap-3 flex-wrap">
-		<div class="relative flex-1 min-w-48">
+	<div class="flex items-center gap-2 flex-wrap">
+		<div class="relative flex-1 min-w-0">
 			<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
 				<path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
 			</svg>
@@ -210,7 +210,8 @@
 	</div>
 
 	<!-- Devices Table -->
-	<div class="bg-gray-900 border border-gray-800 rounded-xl overflow-x-auto">
+	<div class="bg-gray-900 border border-gray-800 rounded-xl">
+	<div class="overflow-x-auto rounded-xl">
 		<table class="w-full text-sm whitespace-nowrap">
 			<thead class="bg-gray-800 text-gray-400">
 				<tr>
@@ -282,6 +283,7 @@
 				{/each}
 			</tbody>
 		</table>
+	</div>
 	</div>
 
 	<p class="text-xs text-gray-600">{data.devices.length} device{data.devices.length === 1 ? '' : 's'} total</p>

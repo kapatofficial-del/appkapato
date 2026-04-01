@@ -6,7 +6,7 @@
 	let editing = $state(false);
 </script>
 
-<div class="p-8 space-y-8">
+<div class="p-4 sm:p-8 space-y-6">
 
 	<!-- Back + Header -->
 	<div>
@@ -16,7 +16,7 @@
 			</svg>
 			Back to Clients
 		</a>
-		<div class="flex items-start justify-between">
+		<div class="flex flex-wrap items-start justify-between gap-2">
 			<div>
 				<h2 class="text-2xl font-bold text-white">{data.client.name}</h2>
 				<p class="text-gray-500 text-sm mt-1">{data.client.email}</p>
@@ -52,7 +52,7 @@
 		{#if editing}
 			<p class="text-sm font-semibold text-blue-400 mb-5">Edit Client</p>
 			<form method="POST" action="?/update" use:enhance={() => ({ result, update }) => { if (result.type === 'success') editing = false; update(); }} class="space-y-4">
-				<div class="grid grid-cols-2 gap-4">
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 					<div>
 						<label class="text-xs text-gray-500 mb-1 block" for="name">Name <span class="text-red-400">*</span></label>
 						<input id="name" name="name" value={data.client.name} required class="w-full bg-gray-800 border border-gray-700 focus:border-blue-500 focus:outline-none rounded-lg px-3 py-2.5 text-sm text-white" />
@@ -69,7 +69,7 @@
 						<label class="text-xs text-gray-500 mb-1 block" for="phone">Phone</label>
 						<input id="phone" name="phone" value={data.client.phone ?? ''} class="w-full bg-gray-800 border border-gray-700 focus:border-blue-500 focus:outline-none rounded-lg px-3 py-2.5 text-sm text-white" />
 					</div>
-					<div class="col-span-2">
+					<div class="sm:col-span-2">
 						<label class="text-xs text-gray-500 mb-1 block" for="address">Address</label>
 						<input id="address" name="address" value={data.client.address ?? ''} class="w-full bg-gray-800 border border-gray-700 focus:border-blue-500 focus:outline-none rounded-lg px-3 py-2.5 text-sm text-white" />
 					</div>
@@ -81,7 +81,7 @@
 			</form>
 		{:else}
 			<p class="text-xs text-gray-500 uppercase tracking-widest mb-4">Client Info</p>
-			<dl class="grid grid-cols-2 gap-x-8 gap-y-4 text-sm">
+			<dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm">
 				<div>
 					<dt class="text-gray-500 mb-1">Name</dt>
 					<dd class="text-white font-medium">{data.client.name}</dd>
@@ -98,7 +98,7 @@
 					<dt class="text-gray-500 mb-1">Member Since</dt>
 					<dd class="text-gray-400">{data.client.created_at}</dd>
 				</div>
-				<div class="col-span-2">
+				<div class="sm:col-span-2">
 					<dt class="text-gray-500 mb-1">Address</dt>
 					<dd class="text-white">{data.client.address ?? '—'}</dd>
 				</div>
@@ -112,8 +112,9 @@
 			<p class="text-sm font-semibold text-white">Assigned Devices <span class="ml-2 text-gray-500 font-normal">({data.devices.length})</span></p>
 		</div>
 
-		<div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
-			<table class="w-full text-sm">
+		<div class="bg-gray-900 border border-gray-800 rounded-xl">
+			<div class="overflow-x-auto rounded-xl">
+			<table class="w-full text-sm whitespace-nowrap">
 				<thead class="bg-gray-800 text-gray-400">
 					<tr>
 						<th class="text-left px-6 py-3">Device ID</th>
@@ -155,10 +156,11 @@
 				</tbody>
 			</table>
 		</div>
+		</div>
 
 		<!-- Assign a device -->
 		{#if data.unassigned.length > 0}
-			<form method="POST" action="?/assignDevice" use:enhance class="flex items-center gap-3 mt-3">
+			<form method="POST" action="?/assignDevice" use:enhance class="flex flex-wrap items-center gap-2 mt-3">
 				<select
 					name="device_id"
 					class="bg-gray-800 border border-gray-700 focus:border-green-500 focus:outline-none rounded-lg px-3 py-2 text-sm text-white flex-1"

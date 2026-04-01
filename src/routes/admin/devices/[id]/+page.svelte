@@ -11,44 +11,30 @@
 	let map: import('leaflet').Map | null = null;
 	let markers: import('leaflet').CircleMarker[] = [];
 	let routeLine: import('leaflet').Polyline | null = null;
-	let highlightedMarker: import('leaflet').CircleMarker | null = null;
 	let selectedPingId = $state<number | null>(null);
-	let viewMode = $state<'route' | 'latest'>('route');
 
 	const pings: Ping[] = data.pings;
-	// pings are DESC from DB, reverse for chronological order for route drawing
 	const chronoPings = [...pings].reverse();
 
 	async function initMap() {
 		if (!mapEl || pings.length === 0) return;
-
 		const L = (await import('leaflet')).default;
-
 		map = L.map(mapEl, { maxZoom: 19 }).setView([pings[0].lat, pings[0].lng], 13);
-
 		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			attribution: '© OpenStreetMap contributors',
 			maxZoom: 19
 		}).addTo(map);
-
 		drawRoute(L);
 	}
 
 	function drawRoute(L: typeof import('leaflet').default) {
 		if (!map) return;
-
-		// Clear existing
 		markers.forEach(m => m.remove());
 		markers = [];
 		if (routeLine) { routeLine.remove(); routeLine = null; }
-
 		if (chronoPings.length === 0) return;
-
-		// Draw route polyline
 		const latlngs = chronoPings.map(p => [p.lat, p.lng] as [number, number]);
 		routeLine = L.polyline(latlngs, { color: '#22c55e', weight: 2, opacity: 0.6 }).addTo(map);
-
-		// Draw all pings as small dots
 		chronoPings.forEach((ping, i) => {
 			const isLatest = i === chronoPings.length - 1;
 			const marker = L.circleMarker([ping.lat, ping.lng], {
@@ -58,7 +44,6 @@
 				weight: 1,
 				fillOpacity: isLatest ? 1 : 0.7
 			}).addTo(map!);
-
 			marker.bindPopup(`
 				<div style="font-family:monospace;font-size:12px;line-height:1.6">
 					<b>${isLatest ? '📍 Latest' : `Ping #${i + 1}`}</b><br/>
@@ -66,15 +51,9 @@
 					${ping.ts}
 				</div>
 			`);
-
-			marker.on('click', () => {
-				selectedPingId = ping.id;
-			});
-
+			marker.on('click', () => { selectedPingId = ping.id; });
 			markers.push(marker);
 		});
-
-		// Fit map to route bounds
 		map.fitBounds(routeLine.getBounds(), { padding: [30, 30] });
 	}
 
@@ -82,11 +61,8 @@
 		if (!map) return;
 		selectedPingId = ping.id;
 		map.setView([ping.lat, ping.lng], 15, { animate: true });
-		// open popup for this marker
 		const idx = chronoPings.findIndex(p => p.id === ping.id);
-		if (idx !== -1 && markers[idx]) {
-			markers[idx].openPopup();
-		}
+		if (idx !== -1 && markers[idx]) markers[idx].openPopup();
 	}
 
 	async function fitAll() {
@@ -94,13 +70,8 @@
 		if (routeLine) map.fitBounds(routeLine.getBounds(), { padding: [30, 30] });
 	}
 
-	onMount(() => {
-		initMap();
-	});
-
-	onDestroy(() => {
-		map?.remove();
-	});
+	onMount(() => { initMap(); });
+	onDestroy(() => { map?.remove(); });
 </script>
 
 <svelte:head>
@@ -110,12 +81,12 @@
 	</style>
 </svelte:head>
 
-<div class="p-5 flex flex-col gap-4 h-full">
+<div class="p-4 flex flex-col gap-4">
 
-	<!-- Back + Header -->
-	<div class="flex items-center justify-between">
+	<!-- Header -->
+	<div class="flex flex-wrap items-start justify-between gap-2">
 		<div class="flex items-center gap-3">
-			<a href="/admin/devices" class="text-gray-500 hover:text-white transition flex items-center gap-1">
+			<a href="/admin/devices" class="text-gray-500 hover:text-white transition flex items-center">
 				<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
 					<path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
 				</svg>
@@ -125,7 +96,7 @@
 				<p class="text-gray-500 text-xs">{data.device.mithun_name} · {data.device.client_name ?? 'Unassigned'}</p>
 			</div>
 		</div>
-		<div class="flex items-center gap-2">
+		<div class="flex flex-wrap items-center gap-2">
 			<span class="px-2 py-0.5 rounded-full text-xs font-medium {data.device.active ? 'bg-green-500/20 text-green-400' : 'bg-gray-700 text-gray-400'}">
 				{data.device.active ? 'Active' : 'Inactive'}
 			</span>
@@ -134,10 +105,7 @@
 					{data.device.active ? 'Deactivate' : 'Activate'}
 				</button>
 			</form>
-			<a
-				href="/admin/devices/{data.device.id}/codegen"
-				class="text-xs px-3 py-1.5 rounded-lg border border-green-700 text-green-400 hover:bg-green-500/10 transition"
-			>
+			<a href="/admin/devices/{data.device.id}/codegen" class="text-xs px-3 py-1.5 rounded-lg border border-green-700 text-green-400 hover:bg-green-500/10 transition">
 				Generate Code
 			</a>
 			<button
@@ -160,7 +128,7 @@
 	{#if editing}
 		<div class="bg-gray-900 border border-blue-600/30 rounded-xl p-4">
 			<form method="POST" action="?/update" use:enhance={() => ({ result, update }) => { if (result.type === 'success') editing = false; update(); }} class="space-y-3">
-				<div class="grid grid-cols-3 gap-3">
+				<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
 					<div>
 						<label class="text-xs text-gray-500 mb-1 block" for="device_id">Device ID <span class="text-red-400">*</span></label>
 						<input id="device_id" name="device_id" value={data.device.device_id} required class="w-full bg-gray-800 border border-gray-700 focus:border-blue-500 focus:outline-none rounded-lg px-3 py-2 text-sm text-white font-mono" />
@@ -179,9 +147,8 @@
 						</select>
 					</div>
 				</div>
-				<!-- Firmware Config -->
 				<p class="text-xs text-gray-500 pt-1 border-t border-gray-800">Firmware Config</p>
-				<div class="grid grid-cols-3 gap-3">
+				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
 					<div>
 						<label class="text-xs text-gray-500 mb-1 block" for="board">Board</label>
 						<select id="board" name="board" class="w-full bg-gray-800 border border-gray-700 focus:border-blue-500 focus:outline-none rounded-lg px-3 py-2 text-sm text-white">
@@ -219,26 +186,25 @@
 						<input id="gps_timeout_ms" name="gps_timeout_ms" type="number" value={data.device.gps_timeout_ms ?? 90000} class="w-full bg-gray-800 border border-gray-700 focus:border-blue-500 focus:outline-none rounded-lg px-3 py-2 text-sm text-white" />
 					</div>
 				</div>
-
 				<div class="flex gap-2">
-					<button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-1.5 rounded-lg transition">Save</button>
-					<button type="button" onclick={() => editing = false} class="text-gray-500 hover:text-white text-xs px-3 py-1.5 transition">Cancel</button>
+					<button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition">Save</button>
+					<button type="button" onclick={() => editing = false} class="text-gray-500 hover:text-white text-xs px-3 py-2 transition">Cancel</button>
 				</div>
 			</form>
 		</div>
 	{:else}
-		<div class="bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 flex items-center gap-8 text-sm flex-wrap">
-			<div><span class="text-gray-500 text-xs">Device ID</span><p class="text-green-400 font-mono font-bold">{data.device.device_id}</p></div>
-			<div><span class="text-gray-500 text-xs">Mithun</span><p class="text-white">{data.device.mithun_name}</p></div>
-			<div><span class="text-gray-500 text-xs">Client</span><p class="text-white">{data.device.client_name ?? '—'}</p></div>
-			<div><span class="text-gray-500 text-xs">Board</span><p class="text-gray-400 text-xs font-mono">{data.device.board ?? 'BOARD_NODEMCU_ESP32'}</p></div>
-			<div><span class="text-gray-500 text-xs">Mode</span><p class="text-gray-400 text-xs font-mono">{data.device.mode ?? 'MODE_BOTH'}</p></div>
-			<div><span class="text-gray-500 text-xs">Registered</span><p class="text-gray-400 text-xs">{data.device.created_at}</p></div>
+		<div class="bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 grid grid-cols-2 sm:flex sm:flex-wrap gap-x-8 gap-y-2 text-sm">
+			<div><span class="text-gray-500 text-xs block">Device ID</span><p class="text-green-400 font-mono font-bold">{data.device.device_id}</p></div>
+			<div><span class="text-gray-500 text-xs block">Mithun</span><p class="text-white">{data.device.mithun_name}</p></div>
+			<div><span class="text-gray-500 text-xs block">Client</span><p class="text-white">{data.device.client_name ?? '—'}</p></div>
+			<div><span class="text-gray-500 text-xs block">Board</span><p class="text-gray-400 text-xs font-mono">{data.device.board ?? 'BOARD_NODEMCU_ESP32'}</p></div>
+			<div><span class="text-gray-500 text-xs block">Mode</span><p class="text-gray-400 text-xs font-mono">{data.device.mode ?? 'MODE_BOTH'}</p></div>
+			<div><span class="text-gray-500 text-xs block">Registered</span><p class="text-gray-400 text-xs">{data.device.created_at}</p></div>
 		</div>
 	{/if}
 
-	<!-- Map + Table side by side -->
-	<div class="grid grid-cols-2 gap-4 flex-1 min-h-0">
+	<!-- Map + Table — stacked on mobile, side by side on desktop -->
+	<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
 		<!-- Map -->
 		<div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden flex flex-col">
@@ -252,12 +218,12 @@
 				{#if pings.length > 0}
 					<div class="flex gap-1.5">
 						<button onclick={fitAll} class="text-xs px-2.5 py-1 rounded-lg border border-gray-700 text-gray-400 hover:text-white transition">Fit All</button>
-						<a href="https://www.google.com/maps?q={pings[0].lat},{pings[0].lng}" target="_blank" class="text-xs px-2.5 py-1 rounded-lg border border-gray-700 text-gray-400 hover:text-white transition">Google Maps</a>
+						<a href="https://www.google.com/maps?q={pings[0].lat},{pings[0].lng}" target="_blank" class="text-xs px-2.5 py-1 rounded-lg border border-gray-700 text-gray-400 hover:text-white transition">Maps</a>
 					</div>
 				{/if}
 			</div>
 			{#if pings.length > 0}
-				<div bind:this={mapEl} class="w-full flex-1 min-h-0"></div>
+				<div bind:this={mapEl} class="w-full h-64 lg:h-80"></div>
 				<div class="px-4 py-2 border-t border-gray-800 flex items-center gap-3 text-xs text-gray-500">
 					<span class="flex items-center gap-1"><span class="inline-block w-2.5 h-2.5 rounded-full bg-green-500"></span> Latest</span>
 					<span class="flex items-center gap-1"><span class="inline-block w-2.5 h-2.5 rounded-full bg-gray-500"></span> Ping</span>
@@ -269,11 +235,11 @@
 		</div>
 
 		<!-- Location Table -->
-		<div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden flex flex-col">
-			<div class="px-4 py-2.5 border-b border-gray-800 flex-shrink-0">
+		<div class="bg-gray-900 border border-gray-800 rounded-xl flex flex-col">
+			<div class="px-4 py-2.5 border-b border-gray-800">
 				<p class="text-xs font-semibold text-white">Location History <span class="text-gray-500 font-normal ml-1">(last {pings.length})</span></p>
 			</div>
-			<div class="overflow-y-auto flex-1 min-h-0">
+			<div class="overflow-x-auto overflow-y-auto max-h-80 lg:max-h-96 rounded-b-xl">
 				<table class="w-full text-xs whitespace-nowrap">
 					<thead class="bg-gray-800 text-gray-400 sticky top-0">
 						<tr>

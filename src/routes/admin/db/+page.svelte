@@ -8,6 +8,7 @@
 	let addingRow = $state(false);
 	let editingRid = $state<number | null>(null);
 	let selected = $state<Set<number>>(new Set());
+	let sidebarOpen = $state(false);
 
 	// columns editable on insert (exclude auto-increment integer pk)
 	const insertCols = $derived(
@@ -53,15 +54,28 @@
 	}
 </script>
 
-<div class="flex h-full text-white">
+<div class="flex h-full text-white relative">
+
+	<!-- Mobile sidebar overlay -->
+	{#if sidebarOpen}
+		<button
+			class="fixed inset-0 bg-black/60 z-20 lg:hidden"
+			onclick={() => sidebarOpen = false}
+			aria-label="Close sidebar"
+		></button>
+	{/if}
 
 	<!-- Tables sidebar -->
-	<aside class="w-52 bg-gray-900 border-r border-gray-800 flex-shrink-0 overflow-y-auto p-4">
+	<aside class="
+		fixed top-0 left-0 h-full w-52 bg-gray-900 border-r border-gray-800 flex-shrink-0 overflow-y-auto p-4 z-30 transition-transform duration-200
+		{sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+		lg:relative lg:translate-x-0 lg:z-auto
+	">
 		<p class="text-xs text-gray-500 uppercase tracking-widest mb-3">Tables</p>
 		{#each data.tables as table}
 			<a
 				href="/admin/db?table={table}"
-				onclick={() => { addingRow = false; editingRid = null; }}
+				onclick={() => { addingRow = false; editingRid = null; sidebarOpen = false; }}
 				class="block px-3 py-2 rounded-lg text-sm mb-1 transition
 					{data.selected === table
 						? 'bg-green-600/20 text-green-400 font-semibold'
@@ -75,17 +89,29 @@
 	</aside>
 
 	<!-- Main -->
-	<div class="w-0 flex-1 overflow-y-auto p-6">
+	<div class="flex-1 overflow-y-auto p-4 sm:p-6 min-w-0">
 
 		<!-- Header -->
-		<div class="flex items-center justify-between mb-5">
+		<div class="flex flex-wrap items-center justify-between gap-2 mb-5">
+			<!-- Mobile: Tables toggle -->
+			<button
+				onclick={() => sidebarOpen = true}
+				class="lg:hidden flex items-center gap-2 text-xs px-3 py-1.5 rounded-lg border border-gray-700 text-gray-400 hover:text-white transition"
+			>
+				<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+				</svg>
+				Tables
+			</button>
+		</div>
+		<div class="flex flex-wrap items-center justify-between gap-2 mb-5">
 			<div>
 				<h2 class="text-xl font-bold">Database</h2>
 				{#if data.selected}
 					<p class="text-gray-500 text-xs mt-0.5">{data.selected} · {data.total} records</p>
 				{/if}
 			</div>
-			<div class="flex items-center gap-2">
+			<div class="flex flex-wrap items-center gap-2">
 				{#if data.selected}
 					<button
 						onclick={() => { addingRow = !addingRow; editingRid = null; }}
@@ -159,7 +185,7 @@
 					<p class="text-sm font-semibold text-green-400 mb-4">New Row</p>
 					<form method="POST" action="?/insert" use:enhance={crudEnhance} class="space-y-3">
 						<input type="hidden" name="__table__" value={data.selected} />
-						<div class="grid grid-cols-2 gap-3">
+						<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
 							{#each insertCols as col}
 								<div>
 									<label class="text-xs text-gray-500 mb-1 block">
@@ -261,7 +287,7 @@
 												>Cancel</button>
 											</div>
 										{:else}
-											<div class="flex gap-1 opacity-0 group-hover:opacity-100 transition">
+											<div class="flex gap-1 lg:opacity-0 lg:group-hover:opacity-100 transition">
 												<button
 													type="button"
 													onclick={() => { editingRid = Number(row._rid); addingRow = false; }}
