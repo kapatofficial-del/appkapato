@@ -7,6 +7,7 @@
 	type Ping = { id: number; lat: number; lng: number; ts: string };
 
 	let editing = $state(false);
+	let selected = $state<Set<number>>(new Set());
 	let mapEl = $state<HTMLDivElement | null>(null);
 	let map: import('leaflet').Map | null = null;
 	let markers: import('leaflet').CircleMarker[] = [];
@@ -68,6 +69,18 @@
 	async function fitAll() {
 		if (!map || chronoPings.length === 0) return;
 		if (routeLine) map.fitBounds(routeLine.getBounds(), { padding: [30, 30] });
+	}
+
+	const allSelected = $derived(pings.length > 0 && pings.every(p => selected.has(p.id)));
+
+	function toggleAll() {
+		selected = allSelected ? new Set() : new Set(pings.map(p => p.id));
+	}
+
+	function toggleRow(id: number) {
+		const next = new Set(selected);
+		next.has(id) ? next.delete(id) : next.add(id);
+		selected = next;
 	}
 
 	onMount(() => { initMap(); });
@@ -236,13 +249,32 @@
 
 		<!-- Location Table -->
 		<div class="bg-gray-900 border border-gray-800 rounded-xl flex flex-col">
-			<div class="px-4 py-2.5 border-b border-gray-800">
+			<div class="px-4 py-2.5 border-b border-gray-800 flex items-center justify-between gap-2">
 				<p class="text-xs font-semibold text-white">Location History <span class="text-gray-500 font-normal ml-1">(last {pings.length})</span></p>
+				{#if selected.size > 0}
+					<form
+						method="POST"
+						action="?/deleteManyPings"
+						use:enhance={() => ({ result, update }) => { if (result.type === 'success') selected = new Set(); update(); }}
+						onsubmit={(e) => { if (!confirm(`Delete ${selected.size} ping${selected.size === 1 ? '' : 's'}?`)) e.preventDefault(); }}
+						class="flex items-center gap-2"
+					>
+						{#each [...selected] as id}
+							<input type="hidden" name="ids" value={id} />
+						{/each}
+						<span class="text-xs text-red-400">{selected.size} selected</span>
+						<button type="submit" class="text-xs px-3 py-1 rounded-lg bg-red-600 hover:bg-red-500 text-white font-semibold transition">Delete</button>
+						<button type="button" onclick={() => selected = new Set()} class="text-xs text-gray-500 hover:text-white transition">Cancel</button>
+					</form>
+				{/if}
 			</div>
 			<div class="overflow-x-auto overflow-y-auto max-h-80 lg:max-h-96 rounded-b-xl">
 				<table class="w-full text-xs whitespace-nowrap">
 					<thead class="bg-gray-800 text-gray-400 sticky top-0">
 						<tr>
+							<th class="px-4 py-2 w-8">
+								<input type="checkbox" checked={allSelected} onchange={toggleAll} class="rounded border-gray-600 bg-gray-700 accent-green-500 cursor-pointer" />
+							</th>
 							<th class="text-left px-4 py-2">#</th>
 							<th class="text-left px-4 py-2">Time</th>
 							<th class="text-left px-4 py-2">Lat</th>
@@ -253,9 +285,12 @@
 					<tbody class="divide-y divide-gray-800">
 						{#each pings as ping, i (ping.id)}
 							<tr
-								class="hover:bg-gray-800/50 transition cursor-pointer {selectedPingId === ping.id ? 'bg-green-500/10' : ''}"
+								class="hover:bg-gray-800/50 transition cursor-pointer {selectedPingId === ping.id ? 'bg-green-500/10' : ''} {selected.has(ping.id) ? 'bg-red-500/5' : ''}"
 								onclick={() => focusPing(ping)}
 							>
+								<td class="px-4 py-2 w-8" onclick={(e) => e.stopPropagation()}>
+									<input type="checkbox" checked={selected.has(ping.id)} onchange={() => toggleRow(ping.id)} class="rounded border-gray-600 bg-gray-700 accent-green-500 cursor-pointer" />
+								</td>
 								<td class="px-4 py-2 text-gray-500">{i === 0 ? '🟢' : pings.length - i}</td>
 								<td class="px-4 py-2 text-gray-300">{ping.ts}</td>
 								<td class="px-4 py-2 font-mono text-gray-400">{ping.lat}</td>
@@ -271,7 +306,7 @@
 								</td>
 							</tr>
 						{:else}
-							<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">No pings yet.</td></tr>
+							<tr><td colspan="6" class="px-4 py-8 text-center text-gray-500">No pings yet.</td></tr>
 						{/each}
 					</tbody>
 				</table>

@@ -69,5 +69,14 @@ export const actions: Actions = {
 		const id = fd.get('id') as string;
 		db.prepare('DELETE FROM locations WHERE id = ?').run(id);
 		return { success: true };
+	},
+
+	deleteManyPings: async ({ request }) => {
+		const fd = await request.formData();
+		const ids = fd.getAll('ids').map(Number).filter(Boolean);
+		if (ids.length === 0) return { success: true };
+		const placeholders = ids.map(() => '?').join(',');
+		db.prepare(`DELETE FROM locations WHERE id IN (${placeholders})`).run(...ids);
+		return { success: true };
 	}
 };
