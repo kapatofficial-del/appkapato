@@ -4,7 +4,7 @@ import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = ({ params }) => {
 	const device = db.prepare(`
-		SELECT d.*, c.name as client_name
+		SELECT d.*, c.name as client_name, c.phone as client_phone
 		FROM devices d
 		LEFT JOIN clients c ON c.id = d.client_id
 		WHERE d.id = ?
@@ -31,6 +31,13 @@ export const actions: Actions = {
 		const device_id = (fd.get('device_id') as string)?.trim().toUpperCase();
 		const mithun_name = (fd.get('mithun_name') as string)?.trim();
 		const client_id = (fd.get('client_id') as string)?.trim() || null;
+		const board = (fd.get('board') as string)?.trim() || 'BOARD_NODEMCU_ESP32';
+		const mode = (fd.get('mode') as string)?.trim() || 'MODE_BOTH';
+		const apn = (fd.get('apn') as string)?.trim() || 'airteliot.com';
+		const sms_number = (fd.get('sms_number') as string)?.trim() || null;
+		const interval_ms = parseInt(fd.get('interval_ms') as string) || 30000;
+		const gps_warmup_min = parseInt(fd.get('gps_warmup_min') as string) || 5;
+		const gps_timeout_ms = parseInt(fd.get('gps_timeout_ms') as string) || 90000;
 
 		if (!device_id || !mithun_name) {
 			return fail(400, { error: 'Device ID and Mithun name are required' });
@@ -39,8 +46,13 @@ export const actions: Actions = {
 		const conflict = db.prepare('SELECT 1 FROM devices WHERE device_id = ? AND id != ?').get(device_id, params.id);
 		if (conflict) return fail(400, { error: `Device ID "${device_id}" already in use` });
 
-		db.prepare('UPDATE devices SET device_id = ?, mithun_name = ?, client_id = ? WHERE id = ?')
-			.run(device_id, mithun_name, client_id, params.id);
+		db.prepare(`
+			UPDATE devices
+			SET device_id = ?, mithun_name = ?, client_id = ?,
+			    board = ?, mode = ?, apn = ?, sms_number = ?,
+			    interval_ms = ?, gps_warmup_min = ?, gps_timeout_ms = ?
+			WHERE id = ?
+		`).run(device_id, mithun_name, client_id, board, mode, apn, sms_number, interval_ms, gps_warmup_min, gps_timeout_ms, params.id);
 
 		return { success: true };
 	},

@@ -134,6 +134,12 @@
 					{data.device.active ? 'Deactivate' : 'Activate'}
 				</button>
 			</form>
+			<a
+				href="/admin/devices/{data.device.id}/codegen"
+				class="text-xs px-3 py-1.5 rounded-lg border border-green-700 text-green-400 hover:bg-green-500/10 transition"
+			>
+				Generate Code
+			</a>
 			<button
 				onclick={() => editing = !editing}
 				class="text-xs px-3 py-1.5 rounded-lg border {editing ? 'border-blue-600 text-blue-400' : 'border-gray-700 text-gray-400 hover:border-gray-500 hover:text-white'} transition"
@@ -173,6 +179,47 @@
 						</select>
 					</div>
 				</div>
+				<!-- Firmware Config -->
+				<p class="text-xs text-gray-500 pt-1 border-t border-gray-800">Firmware Config</p>
+				<div class="grid grid-cols-3 gap-3">
+					<div>
+						<label class="text-xs text-gray-500 mb-1 block" for="board">Board</label>
+						<select id="board" name="board" class="w-full bg-gray-800 border border-gray-700 focus:border-blue-500 focus:outline-none rounded-lg px-3 py-2 text-sm text-white">
+							<option value="BOARD_NODEMCU_ESP32" selected={data.device.board === 'BOARD_NODEMCU_ESP32'}>NodeMCU ESP32</option>
+							<option value="BOARD_7SEMI_ESP32S3" selected={data.device.board === 'BOARD_7SEMI_ESP32S3'}>7Semi ESP32-S3</option>
+							<option value="BOARD_BEETLE_ESP32C6" selected={data.device.board === 'BOARD_BEETLE_ESP32C6'}>Beetle ESP32-C6</option>
+						</select>
+					</div>
+					<div>
+						<label class="text-xs text-gray-500 mb-1 block" for="mode">Mode</label>
+						<select id="mode" name="mode" class="w-full bg-gray-800 border border-gray-700 focus:border-blue-500 focus:outline-none rounded-lg px-3 py-2 text-sm text-white">
+							<option value="MODE_BOTH" selected={data.device.mode === 'MODE_BOTH'}>Data + SMS</option>
+							<option value="MODE_DATA_ONLY" selected={data.device.mode === 'MODE_DATA_ONLY'}>Data only</option>
+							<option value="MODE_MSG_ONLY" selected={data.device.mode === 'MODE_MSG_ONLY'}>SMS only</option>
+						</select>
+					</div>
+					<div>
+						<label class="text-xs text-gray-500 mb-1 block" for="apn">APN</label>
+						<input id="apn" name="apn" value={data.device.apn ?? 'airteliot.com'} class="w-full bg-gray-800 border border-gray-700 focus:border-blue-500 focus:outline-none rounded-lg px-3 py-2 text-sm text-white font-mono" />
+					</div>
+					<div>
+						<label class="text-xs text-gray-500 mb-1 block" for="sms_number">SMS Number</label>
+						<input id="sms_number" name="sms_number" value={data.device.sms_number ?? data.device.client_phone ?? ''} placeholder="e.g. +916009202874" class="w-full bg-gray-800 border border-gray-700 focus:border-blue-500 focus:outline-none rounded-lg px-3 py-2 text-sm text-white font-mono" />
+					</div>
+					<div>
+						<label class="text-xs text-gray-500 mb-1 block" for="interval_ms">Interval (ms)</label>
+						<input id="interval_ms" name="interval_ms" type="number" value={data.device.interval_ms ?? 30000} class="w-full bg-gray-800 border border-gray-700 focus:border-blue-500 focus:outline-none rounded-lg px-3 py-2 text-sm text-white" />
+					</div>
+					<div>
+						<label class="text-xs text-gray-500 mb-1 block" for="gps_warmup_min">GPS Warmup (min)</label>
+						<input id="gps_warmup_min" name="gps_warmup_min" type="number" value={data.device.gps_warmup_min ?? 5} class="w-full bg-gray-800 border border-gray-700 focus:border-blue-500 focus:outline-none rounded-lg px-3 py-2 text-sm text-white" />
+					</div>
+					<div>
+						<label class="text-xs text-gray-500 mb-1 block" for="gps_timeout_ms">GPS Timeout (ms)</label>
+						<input id="gps_timeout_ms" name="gps_timeout_ms" type="number" value={data.device.gps_timeout_ms ?? 90000} class="w-full bg-gray-800 border border-gray-700 focus:border-blue-500 focus:outline-none rounded-lg px-3 py-2 text-sm text-white" />
+					</div>
+				</div>
+
 				<div class="flex gap-2">
 					<button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-1.5 rounded-lg transition">Save</button>
 					<button type="button" onclick={() => editing = false} class="text-gray-500 hover:text-white text-xs px-3 py-1.5 transition">Cancel</button>
@@ -180,10 +227,12 @@
 			</form>
 		</div>
 	{:else}
-		<div class="bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 flex items-center gap-8 text-sm">
+		<div class="bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 flex items-center gap-8 text-sm flex-wrap">
 			<div><span class="text-gray-500 text-xs">Device ID</span><p class="text-green-400 font-mono font-bold">{data.device.device_id}</p></div>
 			<div><span class="text-gray-500 text-xs">Mithun</span><p class="text-white">{data.device.mithun_name}</p></div>
 			<div><span class="text-gray-500 text-xs">Client</span><p class="text-white">{data.device.client_name ?? '—'}</p></div>
+			<div><span class="text-gray-500 text-xs">Board</span><p class="text-gray-400 text-xs font-mono">{data.device.board ?? 'BOARD_NODEMCU_ESP32'}</p></div>
+			<div><span class="text-gray-500 text-xs">Mode</span><p class="text-gray-400 text-xs font-mono">{data.device.mode ?? 'MODE_BOTH'}</p></div>
 			<div><span class="text-gray-500 text-xs">Registered</span><p class="text-gray-400 text-xs">{data.device.created_at}</p></div>
 		</div>
 	{/if}
